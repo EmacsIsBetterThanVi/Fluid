@@ -1,0 +1,72 @@
+Fluid:
+Fluid is a class based, object oriented programming language with rigid typing. How class loading is actually performed is implementation defined, however there are the following keywords:
+import - shuts up the compiler about missing symbols, and loads the class into memory.
+class - defines a class.
+package - declares the path to the compiled files
+namespace - defines a non-insatiable collection of methods and variables, much like a class
+enum - an enumeration of constants
+const - declares an unmodifiable value, freezing objects, and disallowing redefinition.
+final - disallow redefinition, but objects can still have their properties modified.
+using - loads an annotation collection
+assert - a debug keyword, is ignored if DEBUG=false set by @DEBUG <bool>
+break - escape from loops and switch.
+continue - escape from the current iteration
+catch - error handling.
+default - else in a switch statement
+if, else - for program logic
+for - For loop
+is - returns true if operand 1 is an instance of operand 2
+new - calls the constructer of the program
+return - return from a function
+switch - branch between multiple statement
+case - part of switch statements
+volatile - can not be optimized away
+while - a while loop
+do - used in do..while loops
+static - allows accessing a field or method of a class that has not been instantiated.
+throw - throws an error
+try - starts a catchable code block
+public - function or field is publicly accessible
+private - function or field is only accessible from within the class
+sizeof - returns the size of the operand
+
+Fluid also includes the following primitives:
+bool - 1 bit
+sbyte - 1 byte, 8 bits, signed
+byte - 1 byte, 8 bits, unsigned
+short - 2 bytes, 16 bits, signed(only on 32bit+ systems)
+word - 2 bytes, 16 bits, unsigned.
+int - 4 bytes, 32 bits, signed (2 bytes, 16 bits on 16 bit systems)
+whole - 4 bytes, 32 bits, unsigned (only on 32bit+ systems)
+long int - 8 bytes, 64 bits, signed (only on 64bit systems)
+long whole - 8 bytes, 64 bits, unsigned (only on 64bit systems)
+float - a floating point number, 4 bytes, 32 bits(only on 32bit+ systems)
+double - a double precession floating point number, 8 bytes, 64 bits(only on 64bit systems)
+char - 1 byte or 2 bytes, 8 bits or 16 bits (depends on if the system supports unicode or not, just a synonym for either byte or word)
+void - can not have a value. Exclusively used as the return type of functions with no return 		value. A void[] is merely a reserved section of memory, allowing for dynamic 			allocations without calling out to the dynamic allocations system.
+arrays - not quite a primitive, an array is an ordered collection of data declared using type[n] 	which declares and defines the array to n elements of value zero or by using type[] 		which requires latter declaration. Arrays will be listed as type[] in this 			documentation.
+
+Fluid declares the following additional builtin constants:
+true - true: bool, 1, just looks better syntacticly
+false - false: bool, 0, just looks better syntacticly
+free - *: void[], for dynamic allocation, the size of free might be set with an option, or the 		initial class loading process might be able to read metadata saying how large free 		should be.
+
+Fluid uses an annotation system to tell the compiler how to handle special cases, containing both metadata and compiler instructions. The following builtin annotation are included:
+@DEBUG <bool> - sets DEBUG to true or false. An abbreviation for @Define DEBUG <bool>
+@Define <String: Name> <Any: Value> - defines macro Name to Value
+@Undef <String: Name> - undefines a macro
+@Override - Allows the next statement to ignore previous values.
+@Ifdef <String: Name> - requires Name to be defined in order to compile the next region
+@Ifndef <String: Name> - requires Name to not be defined in order to compile the next region
+@If <Any: OP1> <ComparisonOperator: COP> <Any: OP2> - requires OP1 COP OP2 to be true to compile the next region
+@Region - Starts a region
+@EndRegion - Ends a region
+@C - Skips compilation on the next region, but still inserts the section, treating its contents as C.
+@Forget - Ignores the last @If... statement
+@Ignore <String: Warn> - Ignores the stated warning
+@SyntacticContruct <String: Format> - Creates a specialized syntactic construct for the function. Syntactic Construct Formats use % and a number to specify arguments.
+@Free <Int: Size> - Says what the maximum size of free is.
+
+C design functions:
+Function and field names inside classes and namespaces are named {CLASS}${FUNCTION} when necessary.
+Both a listing file and a header file is generated when a class, namespace or enumeration is compiled.
