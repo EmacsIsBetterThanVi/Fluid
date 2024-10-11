@@ -1,0 +1,12 @@
+mkdir build .
+generate fluid/main build
+generate fluid/annotations build
+generate fluid/compiler build
+generate fluid/primitives build
+link fluid ./build
+install ./build/fluid
+sh echo Building fluid class files
+sh cd classes
+mkdir build .
+SYSTEM
+sh cd ..
