@@ -1,0 +1,13 @@
+public namespace Calculus{
+       	  @SyntacticConstruct "d/dx(%1)"
+	  public (T (T)) derivative<T>((T (T)) f){
+	  	 return (T (T x) {
+		 	return lim<T>(0, ((T (T x, T n)) {
+				       return (f(x-n)-f(x))/n;
+				    }));
+			});
+	  }
+	  public T lim<T>(T end, (T (T, T)) f){
+	  	 
+	  }
+}

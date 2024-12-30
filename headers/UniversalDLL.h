@@ -25,7 +25,7 @@ DLL LOAD_DLL(char * name){
   strcat(path, name);
   DLL tmp=dlopen(path, RTLD_LAZY);
   free(path);
-  if (!handle){
+  if (!tmp){
     fprintf(stderr, "Loading dynamicly linked library failed: %s\n", dlerror());
     longjmp(LIBLOAD_FAILED, 1);
   }
@@ -44,7 +44,7 @@ void * LOAD_FUNC(DLL lib, char * name){
 typedef void* DLL;
 DLL LOAD_DLL(char * name){
   DLL tmp=dlopen(name, RTLD_LAZY);
-  if (!handle){
+  if (!tmp){
     fprintf(stderr, "Loading dynamicly linked library failed: %s\n", dlerror());
     longjmp(LIBLOAD_FAILED, 1);
   }

@@ -27,7 +27,14 @@ throw - throws an error
 try - starts a catchable code block
 public - function or field is publicly accessible
 private - function or field is only accessible from within the class
-sizeof - returns the size of the operand
+sizeof - returns the size of the operand.
+Alias - creates an alias of a function.
+flow - creates a sub local level
+fluid - does various things
+branch - defines the main thread for a section
+and - defines the child threads for a section
+freeze - pauses a thread until melted
+melt - resumes a thread
 
 Fluid also includes the following primitives:
 bool - 1 bit
@@ -63,7 +70,7 @@ Fluid uses an annotation system to tell the compiler how to handle special cases
 @C - Skips compilation on the next region, but still inserts the section, treating its contents as C.
 @Forget - Ignores the last @If... statement
 @Ignore <String: Warn> - Ignores the stated warning
-@SyntacticContruct <String: Format> - Creates a specialized syntactic construct for the function. Syntactic Construct Formats use % and a number to specify arguments.
+@SyntacticConstruct <String: Format> - Creates a specialized syntactic construct for the function. Syntactic Construct Formats use % and a number to specify arguments.
 @Free <Int: Size> - Says what the maximum size of free is. An abbreviated form of @Insert FREE.size <Int: Size>
 @Using <String: Name> - loads annotation collection Name
 @Alias <String: Old> <String: New> - aliases @Old to @New
