@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "pipe.h"
+#include <setjmp.h>
 #ifndef _WIN32
 #include <unistd.h>
 #include <getopt.h>
@@ -22,8 +23,10 @@ bool inputp = 0;
 bool no_cc = 0;
 char * cOptions;
 char * outputFile;
+char * inputFileName;
 FILE * inputFile;
 char * mainFuncName;
+jmp_buf buf;
 static struct option clioptions[] = {
        {"verbose", no_argument, 0, 'v'},
        {"version", no_argument, 0, 'V'},
@@ -32,14 +35,29 @@ static struct option clioptions[] = {
        {"output", required_argument, 0, 'o'},
        {"c-options", required_argument, 0, 'C'},
        {"altmain", required_argument, 0, 'A'},
+       {"help", no_argument, 0, 'h'},
        {0, 0, 0, 0}
 };
+const int major = 0;
+const int minor = 1;
+const int patch = 0;
 int main(int argc, char ** argv){
     int c=0;
     int optindex = 0;
     while(c!=-1){
-	c = getopt_long(argc, argv, ":vVcC:o:I:A:", clioptions, &optindex);
+	c = getopt_long(argc, argv, ":vVcC:o:I:A:h", clioptions, &optindex);
 	switch (c){
+	    case 'h':
+	         printf("Fluid compiler version %d.%d.%d\nusage: fluid [options] file\n", major, minor, patch);
+	         printf("-h or --help\t\t\t\tDisplays this help message\n");
+		 printf("-V or --version\t\t\t\tDisplays the version number and exits\n");
+		 printf("-v or --verbose\t\t\t\tDisplays extra debug info\n");
+		 printf("-c or --no-cc\t\t\t\tDoes not trigger the C compiler\n");
+		 printf("-C options or --c-options=options\tAdds extra options to the compilation stage\n");
+		 printf("-I file or --input=file\t\t\tAn alternative way of specifying the input file\n");
+		 printf("-o file or --output=file\t\tSets the name of the output file\n");
+		 printf("-A prototype or --altmain=prototype\tSets the name of the main function\n");
+	         return 0;
 	    case 'C':
 	    	 coptions=1;
 		 no_cc = 0;
@@ -56,11 +74,11 @@ int main(int argc, char ** argv){
 	    	 no_cc = 1;
 		 break;
 	    case 'V':
-	    	 printf("Fluid version 0.0.0");
+	         printf("Fluid version %d.%d.%d\n", major, minor, patch);
 		 return 0;
 	    case 'I':
 	    	 inputp=1;
-		 inputFile = fopen(optarg, "r");
+		 inputFileName = optarg;
 		 break;
 	    case 'A':
 	    	 altmain = 1;
@@ -69,11 +87,12 @@ int main(int argc, char ** argv){
 	}
     }
     if (optind < argc && !inputp){
-       inputFile=fopen(argv[argc-1], "r");
+      inputFileName = argv[argc-1];
     } else if(!inputp){
       	printf("no input file provided");
       	return 2;
     }
+    inputFile = fopen(inputFileName, "r");
     if(!outputp){
 	if(no_cc){
 		outputFile = "fluid.out.c";
@@ -85,7 +104,8 @@ int main(int argc, char ** argv){
 	mainFuncName = "void main(String[])"; //Function prototype does not care about argument names. A full function name such as {CLASS}${FUNCTION}${OVERLOAD} is also valid
     }
     int err=0;
-    if(err=setjmp()){
+    err=setjmp(buf);
+    if(err!=0){
       return err;
     } else{
       compile(inputFile, outputFile, verbose_flag, mainFuncName);

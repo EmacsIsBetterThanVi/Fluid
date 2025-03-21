@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #define PREAD 1
 #define PWRITE 2
 #define PREADWRITE 2
 int * openP(){
-  int PIPE[2];
+  int * PIPE = (int *)calloc(2, sizeof(int));
   pipe(PIPE);
-  return PIPE:
+  return PIPE;
 }
 int writeP(int PIPE[2], const char * buffer){
   return write(PIPE[0], (void *)buffer, strlen(buffer)+1);
