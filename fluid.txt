@@ -35,6 +35,7 @@ branch - defines the main thread for a section
 and - defines the child threads for a section
 freeze - pauses a thread until melted
 melt - resumes a thread
+using - Loads a specilized compiler behavior.
 
 Fluid also includes the following primitives:
 bool - 1 bit
