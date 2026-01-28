@@ -29,7 +29,7 @@ public - function or field is publicly accessible
 private - function or field is only accessible from within the class
 sizeof - returns the size of the operand.
 Alias - creates an alias of a function.
-flow - creates a sub local level
+flow - creates a sub local level, flow allows for the definition of local variables, and copying shadowed variables into it's scope, if one does not need to define variables to de shadow, one does not need to use flow.
 fluid - does various things
 branch - defines the main thread for a section
 and - defines the child threads for a section

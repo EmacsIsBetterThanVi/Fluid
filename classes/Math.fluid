@@ -1,13 +1,24 @@
 public namespace Calculus{
-       	  @SyntacticConstruct "d/dx(%1)"
+       	  @SyntacticConstruct "d/dx(%1)" = "derivative<%1$return>(%1)"
+	  @SyntacticConstruct "%1'(%2)" = "derivative<%1$return>(%1)(%2)"
 	  public (T (T)) derivative<T>((T (T)) f){
-	  	 return (T (T x) {
-		 	return lim<T>(0, ((T (T x, T n)) {
-				       return (f(x-n)-f(x))/n;
-				    }));
+	  	 return (T (T x)) {
+		 	return lim<T>(0, (T (T n)) {
+			       return (f(x+n)-f(x))/n;
 			});
+		};
 	  }
-	  public T lim<T>(T end, (T (T, T)) f){
+	  public T integral<T>((T (T)) f, T start, T end) {
+		 return lim<T>(T'max, (T (T n)) {
+			return sum<T>(0, n-1, (T (T i)) {
+			       return ((end - start)/k) * f(start + ((end-start)/k)*i)
+			});
+		});
+	  }
+	  public T lim<T>(T end, (T (T)) f){
+	  	 
+	  }
+	  public T sum<T>(T start, T end, (T (T)) f){
 	  	 
 	  }
 }

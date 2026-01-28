@@ -21,6 +21,7 @@ bool coptions = 0;
 bool outputp = 0;
 bool inputp = 0;
 bool no_cc = 0;
+bool stdinp = 0;
 char * cOptions;
 char * outputFile;
 char * inputFileName;
@@ -36,6 +37,7 @@ static struct option clioptions[] = {
        {"c-options", required_argument, 0, 'C'},
        {"altmain", required_argument, 0, 'A'},
        {"help", no_argument, 0, 'h'},
+       {"stdin", no_argument, 0, '@'}
        {0, 0, 0, 0}
 };
 const int major = 0;
@@ -45,7 +47,7 @@ int main(int argc, char ** argv){
     int c=0;
     int optindex = 0;
     while(c!=-1){
-	c = getopt_long(argc, argv, ":vVcC:o:I:A:h", clioptions, &optindex);
+	c = getopt_long(argc, argv, ":vVcC:o:I:A:h@", clioptions, &optindex);
 	switch (c){
 	    case 'h':
 	         printf("Fluid compiler version %d.%d.%d\nusage: fluid [options] file\n", major, minor, patch);
@@ -84,6 +86,9 @@ int main(int argc, char ** argv){
 	    	 altmain = 1;
 		 mainFuncName = optarg;
 		 break;
+	    case '@':
+	         stdinp = 1;
+		 break;
 	}
     }
     if (optind < argc && !inputp){
@@ -92,7 +97,8 @@ int main(int argc, char ** argv){
       	printf("no input file provided");
       	return 2;
     }
-    inputFile = fopen(inputFileName, "r");
+    if (stdinp) inputFile = ;
+    else inputFile = fopen(inputFileName, "r");
     if(!outputp){
 	if(no_cc){
 		outputFile = "fluid.out.c";

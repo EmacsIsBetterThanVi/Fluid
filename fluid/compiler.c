@@ -33,9 +33,9 @@ bool IsOperator(char nextchar){
   return (nextchar != '=' && nextchar != '<' && nextchar != '>' && nextchar != '[' && nextchar != ']' &&  nextchar != '!' && nextchar != '&' && nextchar != '*'  && nextchar != '+' && nextchar != '-' && nextchar != '/' && nextchar != '|' && nextchar != '^');
 }
 typedef struct name {
-  char name[256];
+  char name[32];
   enum Ntype type;
-  char TypeName[256];
+  char TypeName[32];
 } Name;
 void ClearTokens(){
   for(int i=0; i<256; i++){
@@ -47,24 +47,18 @@ typedef struct Layer {
   int Line;
   char Type;
 } Layer;
+void InitToken(int * TokenPointer, bool first){
+  tokens[*TokenPointer] = calloc(256, 1);
+  if (!first) (*TokenPointer)++;
+}
 void ConstructC(){
 }
-void TokenRead(int * start, int end, char * string, char * CODE){
-  int Tptr = 0;
-  for(int i=start[0]; i<end; i++){
-    if(CODE[i]!=' ' && CODE[i]!='\n' && CODE[i]!='\t' && CODE[i]!='\r'){
-      string[Tptr] = CODE[i];
-      Tptr++;
-    }
-  }
-  start[0]=end+1;
-}
-Name * names[256];
+Name * names[2048];
 bool HasMainFunc = false;
 int layer=0;
 Layer layers[64];
 char package[256];
-char class[256];
+char class[32];
 #define READ TokenRead(&last, i, tokens[TokenCounter], ProgramContent)
 int compile(FILE * inf, char * outf, bool verbose, char * mainFunc){
   #if UINTPTR_MAX == 0xFFFFFFF
@@ -82,6 +76,7 @@ int compile(FILE * inf, char * outf, bool verbose, char * mainFunc){
   int last=0;
   int TokenCounter = 0;
   int Line = 1;
+  InitToken(&TokenCounter, true);
   for(int i=0; i<length; i++){
     if(ProgramContent[i] == 0){ // Run Clean up code, and exit
       if (layer == 0) return 0;
@@ -103,31 +98,37 @@ int compile(FILE * inf, char * outf, bool verbose, char * mainFunc){
 	FILE * plist = fopen(fullPath, "wb");
        }
        layer = 0;
-    } else if (ProgramContent[i] == '{'){
+    } else if (ProgramContent[i] == '{') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       layers[layer].Line = Line;
       layers[layer].Type = '{';
       layer++;
-    } else if (ProgramContent[i] == '('){
+    } else if (ProgramContent[i] == '(') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       layers[layer].Line = Line;
       layers[layer].Type = '(';
       layer++;
-    }else if (ProgramContent[i] == '['){
+    } else if (ProgramContent[i] == '[') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       layers[layer].Line = Line;
       layers[layer].Type = '[';
       layer++;
-    } else if (ProgramContent[i] == '}'){
+    } else if (ProgramContent[i] == '}') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       if (layers[layer-1].Type == '{')layer--;
       else {
 	printf("Unexpected } on line %d\n", Line);
 	return 2;
       }
-    } else if (ProgramContent[i] == ')'){
+    } else if (ProgramContent[i] == ')') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       if (layers[layer-1].Type == '(')layer--;
       else {
 	printf("Unexpected ) on line %d\n", Line);
 	return 2;
       }
-    }else if (ProgramContent[i] == ']'){
+    } else if (ProgramContent[i] == ']') {
+      if(tokens[TokenCounter][0]!=0) InitToken(&TokenCounter, false);
       if (layers[layer-1].Type == '[')layer--;
       else {
 	printf("Unexpected ] on line %d\n", Line);
@@ -138,9 +139,12 @@ int compile(FILE * inf, char * outf, bool verbose, char * mainFunc){
     }else if(ProgramContent[i] == ';'){
       ConstructC();
       ClearTokens();
+      InitToken(&TokenCounter, true);
       last=i+1;
-    } else if (ProgramContent[i] == ' '){
-      
+    } else if (ProgramContent[i] == ' ') {
+      if (ProgramContent[i+1] > 32)
+        InitToken(&TokenCounter, false);
+	
     } /* else if(ProgramContent[i]==' '){
      if (IsSyntaticSpace(ProgramContent[i+1])){
 	tokens[TokenCounter] = malloc(i-last);
